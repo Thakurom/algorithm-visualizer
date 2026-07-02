@@ -4,10 +4,11 @@
   "title": "Algorithm Visualizer",
   "description": "Algorithm Visualizer is an interactive online platform that visualizes algorithms from code.",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider BROWSER=none react-scripts start",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "coach": "node coach-server/server.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -24,7 +25,6 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8080",
   "license": "MIT",
   "engines": {
     "node": ">=10.15.3"
@@ -40,7 +40,7 @@
     "brace": "latest",
     "chart.js": "^2.8.0",
     "js-cookie": "^2.2.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "npm:sass@^1.69.7",
     "query-string": "^6.7.0",
     "raw-loader": "^3.0.0",
     "react": "^16.8.6",
@@ -64,5 +64,9 @@
     "screenfull": "^4.2.0",
     "sprintf-js": "^1.1.2",
     "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "http-proxy-middleware": "^2.0.6"
   }
 }
