@@ -6,6 +6,26 @@ Welcome to Algorithm Visualizer, an interactive online platform designed to brin
 [![GitHub contributors](https://img.shields.io/github/contributors/algorithm-visualizer/algorithm-visualizer.svg?style=flat-square)](https://github.com/algorithm-visualizer/algorithm-visualizer/graphs/contributors)
 [![GitHub license](https://img.shields.io/github/license/algorithm-visualizer/algorithm-visualizer.svg?style=flat-square)](https://github.com/algorithm-visualizer/algorithm-visualizer/blob/master/LICENSE)
 
+## Problem Coach (this fork)
+
+This fork adds an AI-powered **Problem Coach**: paste a LeetCode / Codeforces / CodeChef problem
+statement (or just a LeetCode problem URL) and it loads a Scratch Paper workspace with ordered tabs —
+a plain-language explanation of what the problem asks, which algorithm family it belongs to and the
+signals that tell you so, three escalating hints, an example walkthrough, a runnable step-by-step
+visualization, and (only when you are ready) the solution.
+
+It uses the [Claude Code CLI](https://claude.com/claude-code) installed on your machine, so there is
+no API key and no extra cost beyond your existing subscription.
+
+To run it locally you need two terminals:
+
+```
+npm start          # terminal 1: the web app on http://localhost:3000
+npm run coach      # terminal 2: the local coach server on port 8788
+```
+
+Then open http://localhost:3000 and click **Problem Coach** in the header.
+
 ## Languages and Frameworks Used
 [![Languages](https://skillicons.dev/icons?i=html,css,js,react,nodejs,redux)](https://skillicons.dev)
 
