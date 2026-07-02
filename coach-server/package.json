@@ -1,0 +1,10 @@
+{
+  "name": "coach-server",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Local companion server for the Problem Coach: analyzes DSA problems via the Claude Code CLI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

@@ -15,7 +15,7 @@ module.exports = function (app) {
     target: 'http://localhost:8788',
     changeOrigin: true,
     pathRewrite: { '^/coach': '' },
-    proxyTimeout: 300000,
-    timeout: 300000,
+    proxyTimeout: 600000,
+    timeout: 600000,
   }));
 };
