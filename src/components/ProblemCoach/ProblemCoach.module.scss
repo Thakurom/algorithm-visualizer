@@ -1,0 +1,76 @@
+@import "~common/stylesheet/index";
+
+.overlay {
+  z-index: 200;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, .6);
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    width: 640px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+    padding: 24px;
+    background-color: $theme-normal;
+    box-shadow: 0 0 24px $color-shadow;
+
+    .title {
+      margin: 0 0 8px;
+      font-size: $font-size-large;
+      font-weight: bold;
+    }
+
+    .description {
+      margin: 0 0 16px;
+      line-height: 1.5;
+    }
+
+    .input {
+      height: 200px;
+      padding: 8px;
+      border: 1px solid $theme-light;
+      resize: vertical;
+      background-color: $theme-dark;
+      color: $color-font;
+      font-family: monospace;
+      font-size: $font-size-normal;
+
+      &:focus {
+        outline: none;
+        border-color: $color-highlight;
+      }
+    }
+
+    .error {
+      margin-top: 12px;
+      padding: 8px;
+      border-left: 2px solid $color-alert;
+      background-color: $theme-dark;
+      color: $color-alert;
+    }
+
+    .status {
+      margin-top: 12px;
+      color: $color-active;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+      height: $line-height;
+
+      .action {
+        margin-left: 8px;
+      }
+    }
+  }
+}
