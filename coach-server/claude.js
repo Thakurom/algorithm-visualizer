@@ -16,41 +16,67 @@ function runClaude(prompt, { timeoutMs = 360000 } = {}) {
 
     let stdout = '';
     let stderr = '';
-    let timedOut = false;
+    let settled = false;
+    const settle = (err, result) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (err) reject(err);
+      else resolve(result);
+    };
     const timer = setTimeout(() => {
-      timedOut = true;
-      // child.pid is the cmd.exe wrapper; /T kills the whole process tree
-      spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], { shell: true, windowsHide: true });
+      settle(withCode(new Error(`Claude timed out after ${timeoutMs / 1000}s`), 'CLAUDE_TIMEOUT', 504));
+      if (process.platform === 'win32') {
+        // child.pid is the cmd.exe wrapper; /T kills the whole process tree
+        try {
+          const killer = spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], { windowsHide: true });
+          killer.on('error', err => console.error(`[coach] taskkill failed: ${err.message}`));
+          killer.on('exit', exitCode => {
+            if (exitCode !== 0) console.error(`[coach] taskkill exited ${exitCode}`);
+          });
+        } catch (err) {
+          console.error(`[coach] taskkill failed: ${err.message}`);
+        }
+      } else {
+        try {
+          child.kill('SIGKILL');
+        } catch (err) {
+          console.error(`[coach] could not kill timed-out claude CLI: ${err.message}`);
+        }
+      }
     }, timeoutMs);
 
     child.stdout.on('data', d => { stdout += d; });
     child.stderr.on('data', d => { stderr += d; });
     child.on('error', err => {
-      clearTimeout(timer);
       err.code = 'CLAUDE_SPAWN_FAILED';
       err.status = 500;
       err.message = `Could not start the claude CLI (${err.message}) — is it installed and on PATH?`;
-      reject(err);
+      settle(err);
     });
     child.on('close', exitCode => {
-      clearTimeout(timer);
-      if (timedOut) {
-        return reject(withCode(new Error(`Claude timed out after ${timeoutMs / 1000}s`), 'CLAUDE_TIMEOUT', 504));
-      }
       if (exitCode !== 0) {
-        return reject(withCode(new Error(`claude exited ${exitCode}: ${stderr.slice(0, 500)}`), 'CLAUDE_FAILED', 502));
+        return settle(withCode(new Error(`claude exited ${exitCode}: ${stderr.slice(0, 500)}`), 'CLAUDE_FAILED', 502));
       }
       try {
         const envelope = JSON.parse(stdout); // --output-format json envelope
         if (envelope.is_error) throw new Error(envelope.result);
-        resolve(envelope.result);
+        settle(null, envelope.result);
       } catch (e) {
-        reject(withCode(new Error(`Could not parse claude CLI output: ${e.message}`), 'CLAUDE_BAD_ENVELOPE', 502));
+        settle(withCode(new Error(`Could not parse claude CLI output: ${e.message}`), 'CLAUDE_BAD_ENVELOPE', 502));
       }
     });
 
-    child.stdin.write(prompt);
-    child.stdin.end();
+    const handleStdinError = err => {
+      settle(withCode(new Error(`Could not write prompt to claude CLI: ${err.message}`), 'CLAUDE_FAILED', 502));
+    };
+    child.stdin.on('error', handleStdinError);
+    try {
+      child.stdin.write(prompt);
+      child.stdin.end();
+    } catch (err) {
+      handleStdinError(err);
+    }
   });
 }
 

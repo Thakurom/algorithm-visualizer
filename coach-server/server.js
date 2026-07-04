@@ -25,8 +25,19 @@ const server = http.createServer((req, res) => {
   let body = '';
   req.on('data', chunk => { body += chunk; });
   req.on('end', async () => {
+    let parsed;
     try {
-      const { problem, url } = JSON.parse(body || '{}');
+      parsed = JSON.parse(body || '{}');
+    } catch (err) {
+      return send(400, { error: 'BAD_REQUEST' });
+    }
+
+    try {
+      const { problem, url } = parsed || {};
+      if ((problem !== undefined && typeof problem !== 'string')
+        || (url !== undefined && typeof url !== 'string')) {
+        return send(400, { error: 'BAD_REQUEST' });
+      }
       let problemText = problem;
       if (url) {
         console.log(`[coach] fetching LeetCode problem: ${url}`);
@@ -51,4 +62,12 @@ const server = http.createServer((req, res) => {
 });
 
 server.requestTimeout = 600000; // analysis legitimately takes minutes (and may retry once)
-server.listen(PORT, () => console.log(`Problem Coach server on http://localhost:${PORT}`));
+server.on('error', err => {
+  if (err.code === 'EADDRINUSE') {
+    console.error('port 8788 already in use — is another coach server running?');
+  } else {
+    console.error(`[coach] server error: ${err.message}`);
+  }
+  process.exit(1);
+});
+server.listen(PORT, '127.0.0.1', () => console.log(`Problem Coach server on http://localhost:${PORT}`));
