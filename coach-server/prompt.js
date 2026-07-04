@@ -70,9 +70,9 @@ Respond with ONLY a single JSON object — no markdown fences, no text before or
                                          //  hint 1: reframe the problem / point at the key observation; do NOT name the technique
                                          //  hint 2: name the technique and why it applies; NO algorithm steps yet
                                          //  hint 3: outline the algorithm in words (near-pseudocode); still NO code
-  "walkthrough": string,                 // markdown: step-by-step trace of the algorithm on the problem's example input (list or table)
+  "walkthrough": string,                 // markdown: step-by-step trace of the algorithm on the problem's example input (use a numbered list, NOT a table — tables do not render here)
   "visualizationJs": string,             // JavaScript following the STRICT RULES, animating the core algorithm on the example input
-  "solutionJs": string                   // plain well-commented JavaScript solution (LeetCode-style function) with complexity analysis in comments. NOT tracer code — do not require anything.
+  "solutionJs": string                   // plain well-commented JavaScript solution (LeetCode-style function) with complexity analysis in comments. NOT tracer code — no require, no module.exports, just the function(s).
 }`;
 
 function buildPrompt(problemText) {
