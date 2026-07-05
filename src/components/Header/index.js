@@ -11,6 +11,7 @@ import faCaretRight from '@fortawesome/fontawesome-free-solid/faCaretRight';
 import faCodeBranch from '@fortawesome/fontawesome-free-solid/faCodeBranch';
 import faExpandArrowsAlt from '@fortawesome/fontawesome-free-solid/faExpandArrowsAlt';
 import faGithub from '@fortawesome/fontawesome-free-brands/faGithub';
+import faLightbulb from '@fortawesome/fontawesome-free-solid/faLightbulb';
 import faTrashAlt from '@fortawesome/fontawesome-free-solid/faTrashAlt';
 import faSave from '@fortawesome/fontawesome-free-solid/faSave';
 import faFacebook from '@fortawesome/fontawesome-free-brands/faFacebook';
@@ -19,10 +20,18 @@ import { GitHubApi } from 'apis';
 import { classes, refineGist } from 'common/util';
 import { actions } from 'reducers';
 import { languages } from 'common/config';
-import { BaseComponent, Button, Ellipsis, ListItem, Player } from 'components';
+import { BaseComponent, Button, Ellipsis, ListItem, Player, ProblemCoach } from 'components';
 import styles from './Header.module.scss';
 
 class Header extends BaseComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      coachOpened: false,
+    };
+  }
+
   handleClickFullScreen() {
     if (screenfull.enabled) {
       if (screenfull.isFullscreen) {
@@ -141,6 +150,8 @@ class Header extends BaseComponent {
               permitted &&
               <Button icon={faTrashAlt} primary onClick={() => this.deleteGist()} confirmNeeded>Delete</Button>
             }
+            <Button icon={faLightbulb} primary
+                    onClick={() => this.setState({ coachOpened: true })}>Problem Coach</Button>
             <Button icon={faFacebook} primary
                     href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}>Share</Button>
             <Button icon={faExpandArrowsAlt} primary
@@ -175,6 +186,10 @@ class Header extends BaseComponent {
           </div>
           <Player className={styles.section}/>
         </div>
+        {
+          this.state.coachOpened &&
+          <ProblemCoach onClose={() => this.setState({ coachOpened: false })}/>
+        }
       </header>
     );
   }
